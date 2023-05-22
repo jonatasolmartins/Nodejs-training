@@ -2,22 +2,31 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user-controller");
 
-//Definimos uma rota para obter o usuário
-//a função recebe dois parametros, o primeiro parametro é o request e o segundo é o response
-//o request é o que o usuário envia para o servidor. Exemplo: o id do usuário (/user/1)
-// o response é o que o servidor envia para o usuário. Exemplo: o usuário com id 1
-router.get("/", function (req, res) {
-    res.status(200).send(userController.getUser());
-  });
-  
-router.get("/cadastrar", function (req, res) {
-    res.send(200).send( 
-      userController.cadastrarUser()   
-    );
+// Define a router to get all users
+// The function is the callback function that will be called when the user access the route /user
+// The req parameter is the request that the client sends to the server. Example: the user with id 1 /user?id=1
+// The res parameter is the response that the server will send back to the client
+router.get("/", function (req, res, next) {
+  let users = userController.getUsers();
+
+    res.send(users).status(200);
   });
 
+// Define a router to create a user
+router.post("/create", function (request, response) {
+  response.send( 
+      userController.createUser(request.body)   
+    ).status(200);
+  });
 
-//Aqui exportamos o módulo para ser usado em outro arquivo
-//Neste caso, estamos exportando o router que contem as rotas definidas para o usuário
+  // Define a router to get a user by id, :id is a parameter past in the url, example: /user/1
+  router.get("/:id", function (request, response) {
+    response.send( 
+      userController.getUserById(request.params.id)   
+    ).status(200);
+  })
+
+// Here we export the router that contains the routes defined for the user
+// This router will be used in the main.js file
 module.exports = router
   
